@@ -1,0 +1,113 @@
+swagger: "2.0"
+info:
+  title: "i18n Api"
+  version: "1.0.0"
+host: "127.0.0.1:8080"
+basePath: "/v1"
+tags:
+- name: Operation
+- name: Query
+schemes:
+- "http"
+paths:
+  /key:
+    post:
+      summary: 更新获保存新的LanguageKey
+      operationId: SaveOrUpdateKey
+      tags:
+      - Operation
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - name: body
+        in: body
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: OK
+        400:
+          description: Fail
+          schema:
+            type: string
+  /upload:
+    put:
+      summary: 上传翻译项
+      operationId: Upload
+      tags:
+      - Operation
+      produces:
+      - application/json
+      consumes:
+      - multipart/form-data
+      parameters:
+      - name: file
+        in: formData
+        type: file
+      responses:
+        200:
+          description: OK
+        400:
+          description: Fail
+          schema:
+            type: string
+  /query/{language}/{status}:
+    get:
+      summary: 下载语言列表
+      tags:
+      - Query
+      produces:
+      - application/json
+      - text/plain
+      parameters:
+      - name: language
+        in: path
+        type: string
+        description: all(全部)
+        required: true
+      - name: status
+        in: path
+        type: string
+        enum:
+        - all
+        - unset
+        - settled
+        required: true
+      - name: languages
+        in: query
+        type: array
+        items:
+          type: string
+        collectionFormat: multi
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/LanguageAPIModel'
+        400:
+          description: Fail
+          schema:
+            type: string
+definitions:
+  LanguageAPIModel:
+    type: object
+    properties:
+      key:
+        type: string
+      default:
+        type: string
+      items:
+        type: array
+        items:
+          type: object
+          properties:
+            location:
+              type: string
+            text:
+              type: string

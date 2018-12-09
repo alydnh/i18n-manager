@@ -1,0 +1,38 @@
+hash: a7388339297430029bbf9bfa9e4156620205bdb663d3bb904913737f85306658
+updated: 2018-07-23T14:39:28.2480265+08:00
+imports:
+- name: github.com/go-openapi/analysis
+  version: 3c8fe72ed5d307113ef76c7c3035964d7e4d4b73
+- name: github.com/go-openapi/errors
+  version: b2b2befaf267d082d779bcef52d682a47c779517
+- name: github.com/go-openapi/jsonpointer
+  version: 3a0015ad55fa9873f41605d3e8f28cd279c32ab2
+- name: github.com/go-openapi/jsonreference
+  version: 3fb327e6747da3043567ee86abd02bb6376b6be2
+- name: github.com/go-openapi/loads
+  version: 2a2b323bab96e6b1fdee110e57d959322446e9c9
+- name: github.com/go-openapi/runtime
+  version: 9a3091f566c0811ef4d54b535179bc0fc484a11f
+- name: github.com/go-openapi/spec
+  version: bce47c9386f9ecd6b86f450478a80103c3fe1402
+- name: github.com/go-openapi/strfmt
+  version: 913ee058e387ac83a67e2d9f13acecdcd5769fc6
+- name: github.com/go-openapi/swag
+  version: 2b0bd4f193d011c203529df626a65d63cb8a79e8
+- name: github.com/go-swagger/go-swagger
+  version: 84da4f998602ef20ebd60a576756996162a1ca66
+- name: github.com/jessevdk/go-flags
+  version: c6ca198ec95c841fdb89fc0de7496fed11ab854e
+- name: github.com/mailru/easyjson
+  version: efc7eb8984d6655c26b5c9d2e65c024e5767c37c
+- name: github.com/mitchellh/mapstructure
+  version: f15292f7a699fcc1a38a80977f80a046874ba8ac
+- name: github.com/PuerkitoBio/purell
+  version: 0bcb03f4b4d0a9428594752bd2a3b9aa0a9d4bd4
+- name: github.com/stretchr/testify
+  version: f35b8ab0b5a2cef36673838d662e249dd9c94686
+- name: github.com/tylerb/graceful
+  version: 4654dfbb6ad53cb5e27f37d99b02e16c1872fbbb
+- name: gopkg.in/yaml.v2
+  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
+testImports: []
