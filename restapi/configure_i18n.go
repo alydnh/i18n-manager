@@ -7,6 +7,7 @@ import (
 	"github.com/rs/cors"
 	"gopkg.in/yaml.v2"
 	"i18n-manager"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -69,7 +70,19 @@ func configureAPI(api *operations.I18nAPI) http.Handler {
 
 	})
 	api.OperationUploadHandler = operation.UploadHandlerFunc(func(params operation.UploadParams) middleware.Responder {
-		return middleware.NotImplemented("operation operation.Upload has not yet been implemented")
+		if bytes, err := ioutil.ReadAll(params.File); nil != err {
+			return operation.NewUploadBadRequest().WithPayload(err.Error())
+		} else {
+			i18n := &i18n_manager.I18N{}
+			if err := yaml.Unmarshal(bytes, i18n); nil != err {
+				return operation.NewUploadBadRequest().WithPayload(err.Error())
+			}
+			if err := manager.Update(i18n); nil != err {
+				return operation.NewUploadBadRequest().WithPayload(err.Error())
+			}
+		}
+
+		return operation.NewUploadOK()
 	})
 
 	api.ServerShutdown = func() {

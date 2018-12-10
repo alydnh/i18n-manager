@@ -64,7 +64,11 @@ func (s *store) Save(items []*I18NItem) error {
 	return s.db.Update(func(txn *badger.Txn) error {
 		for _, item := range items {
 			key := []byte(item.Key)
-			if bytes, err := json.Marshal(item); nil != err {
+			if item.Deletion {
+				if err := txn.Delete(key); nil != err {
+					return err
+				}
+			} else if bytes, err := json.Marshal(item); nil != err {
 				return err
 			} else if err = txn.Set(key, bytes); nil != err {
 				return err

@@ -15,9 +15,10 @@ func (i I18N) ToApiModel() []*models.LanguageAPIModel {
 }
 
 type I18NItem struct {
-	Key     string            `yaml:"key"`
-	Default string            `yaml:"default"`
-	Items   map[string]string `yaml:"items"`
+	Key      string            `yaml:"key"`
+	Default  string            `yaml:"default"`
+	Items    map[string]string `yaml:"items"`
+	Deletion bool             `yaml:"deletion"`
 }
 
 func (i I18NItem) Match(language string, settled bool) (bool, string) {

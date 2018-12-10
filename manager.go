@@ -6,8 +6,6 @@ import (
 	"sync"
 )
 
-const languagePlaceHolder = "<ENTER_TEXT_HERE>"
-
 func CreateManager(store Store) (*Manager, error) {
 	manager := &Manager{
 		store: store,
@@ -55,6 +53,51 @@ func (m *Manager) SaveOrUpdate(keys []string) (err error) {
 	if err = m.store.Save(items); nil == err {
 		for _, item := range items {
 			m.items[item.Key] = item
+		}
+	}
+
+	return
+}
+
+func (m *Manager) Update(i18n *I18N) (err error) {
+	m.lock.RLock()
+	defer m.lock.RUnlock()
+
+	saveOrUpdateItems := make([]*I18NItem, 0, len(i18n.Items))
+	for _, updateItem := range i18n.Items {
+		if updateItem.Deletion {
+			saveOrUpdateItems = append(saveOrUpdateItems, updateItem)
+		} else {
+			item := updateItem.Clone()
+			if isPlaceHolder(item.Default) {
+				item.Default = utils.EmptyString
+			} else if existItem, ok := m.items[updateItem.Key]; !ok {
+				for language, text := range updateItem.Items {
+					if isPlaceHolder(text) {
+						delete(item.Items, language)
+					}
+				}
+				saveOrUpdateItems = append(saveOrUpdateItems, item)
+			} else {
+				if !isPlaceHolder(updateItem.Default) {
+					existItem.Default = updateItem.Default
+				}
+				for language, text := range updateItem.Items {
+					if !isPlaceHolder(text) {
+						existItem.Items[language] = text
+					}
+				}
+			}
+		}
+	}
+
+	if err = m.store.Save(saveOrUpdateItems); nil == err {
+		for _, item := range saveOrUpdateItems {
+			if item.Deletion {
+				delete(m.items, item.Key)
+			} else {
+				m.items[item.Key] = item
+			}
 		}
 	}
 
@@ -139,4 +182,10 @@ func (m *Manager) Query(language, status string, languageTemplates []string) *I1
 	return &I18N{
 		Items: items,
 	}
+}
+
+const languagePlaceHolder = "<ENTER_TEXT_HERE>"
+
+func isPlaceHolder(text string) bool {
+	return strings.Compare(strings.ToUpper(text), languagePlaceHolder) == 0
 }
