@@ -2,7 +2,7 @@ swagger: "2.0"
 info:
   title: "i18n Api"
   version: "1.0.0"
-host: "127.0.0.1:8080"
+host: "127.0.0.1:7082"
 basePath: "/v1"
 tags:
 - name: Operation
@@ -62,7 +62,6 @@ paths:
       - Query
       produces:
       - application/json
-      - text/plain
       parameters:
       - name: language
         in: path

@@ -60,17 +60,20 @@ type store struct {
 	db *badger.DB
 }
 
+const keyPrefix = "i18n$$"
+
 func (s *store) Save(items []*I18NItem) error {
 	return s.db.Update(func(txn *badger.Txn) error {
 		for _, item := range items {
-			key := []byte(item.Key)
+			itemKey:= fmt.Sprintf("%s%s",keyPrefix, item.Key)
+			keyBytes := []byte(itemKey)
 			if item.Deletion {
-				if err := txn.Delete(key); nil != err {
+				if err := txn.Delete(keyBytes); nil != err {
 					return err
 				}
 			} else if bytes, err := json.Marshal(item); nil != err {
 				return err
-			} else if err = txn.Set(key, bytes); nil != err {
+			} else if err = txn.Set(keyBytes, bytes); nil != err {
 				return err
 			}
 		}
@@ -84,8 +87,8 @@ func (s *store) LoadAll() (items []*I18NItem, err error) {
 	err = s.db.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
-		prefix := []byte{0}
-		for it.Seek(prefix); ; it.Next() {
+		prefix := []byte(keyPrefix)
+		for it.Seek(prefix); it.ValidForPrefix(prefix) ; it.Next() {
 			if !it.Valid() {
 				break
 			}

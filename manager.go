@@ -79,14 +79,18 @@ func (m *Manager) Update(i18n *I18N) (err error) {
 				}
 				saveOrUpdateItems = append(saveOrUpdateItems, item)
 			} else {
+				item = existItem.Clone()
 				if !isPlaceHolder(updateItem.Default) {
-					existItem.Default = updateItem.Default
+					item.Default = updateItem.Default
 				}
 				for language, text := range updateItem.Items {
 					if !isPlaceHolder(text) {
-						existItem.Items[language] = text
+						item.Items[language] = text
+					} else {
+						delete(item.Items, language)
 					}
 				}
+				saveOrUpdateItems = append(saveOrUpdateItems, item)
 			}
 		}
 	}
@@ -104,7 +108,7 @@ func (m *Manager) Update(i18n *I18N) (err error) {
 	return
 }
 
-func (m *Manager) Query(language, status string, languageTemplates []string) *I18N {
+func (m *Manager) Query(language, status string, languageTemplates []string, placeHolderIfEmpty bool) *I18N {
 	m.lock.RLock()
 	defer m.lock.RUnlock()
 
@@ -137,7 +141,10 @@ func (m *Manager) Query(language, status string, languageTemplates []string) *I1
 			newItem = &I18NItem{
 				Key:     item.Key,
 				Default: item.Default,
-				Items:   map[string]string{language: languagePlaceHolder},
+				Items:   map[string]string{},
+			}
+			if placeHolderIfEmpty {
+				newItem.Items[language] = languagePlaceHolder
 			}
 		} else if mustSettled && !textIsEmptyOrWhiteSpace {
 			newItem = &I18NItem{
@@ -152,7 +159,7 @@ func (m *Manager) Query(language, status string, languageTemplates []string) *I1
 				Items:   map[string]string{language: text},
 			}
 
-			if utils.EmptyOrWhiteSpace(newItem.Items[language]) {
+			if placeHolderIfEmpty && utils.EmptyOrWhiteSpace(newItem.Items[language]) {
 				newItem.Items[language] = languagePlaceHolder
 			}
 		}
@@ -161,7 +168,9 @@ func (m *Manager) Query(language, status string, languageTemplates []string) *I1
 			if hasTemplates {
 				for language := range templateMap {
 					if text, exists := newItem.Items[language]; !exists || utils.EmptyOrWhiteSpace(text) {
-						newItem.Items[language] = languagePlaceHolder
+						if placeHolderIfEmpty {
+							newItem.Items[language] = languagePlaceHolder
+						}
 					}
 				}
 				for language := range newItem.Items {
@@ -171,7 +180,7 @@ func (m *Manager) Query(language, status string, languageTemplates []string) *I1
 				}
 			}
 
-			if utils.EmptyOrWhiteSpace(newItem.Default) {
+			if placeHolderIfEmpty && utils.EmptyOrWhiteSpace(newItem.Default) {
 				newItem.Default = languagePlaceHolder
 			}
 

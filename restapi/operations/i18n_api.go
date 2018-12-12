@@ -41,7 +41,6 @@ func NewI18nAPI(spec *loads.Document) *I18nAPI {
 		JSONConsumer:          runtime.JSONConsumer(),
 		MultipartformConsumer: runtime.DiscardConsumer,
 		JSONProducer:          runtime.JSONProducer(),
-		TxtProducer:           runtime.TextProducer(),
 		QueryGetQueryLanguageStatusHandler: query.GetQueryLanguageStatusHandlerFunc(func(params query.GetQueryLanguageStatusParams) middleware.Responder {
 			return middleware.NotImplemented("operation QueryGetQueryLanguageStatus has not yet been implemented")
 		}),
@@ -83,8 +82,6 @@ type I18nAPI struct {
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
-	// TxtProducer registers a producer for a "text/plain" mime type
-	TxtProducer runtime.Producer
 
 	// QueryGetQueryLanguageStatusHandler sets the operation handler for the get query language status operation
 	QueryGetQueryLanguageStatusHandler query.GetQueryLanguageStatusHandler
@@ -159,10 +156,6 @@ func (o *I18nAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.TxtProducer == nil {
-		unregistered = append(unregistered, "TxtProducer")
-	}
-
 	if o.QueryGetQueryLanguageStatusHandler == nil {
 		unregistered = append(unregistered, "query.GetQueryLanguageStatusHandler")
 	}
@@ -233,9 +226,6 @@ func (o *I18nAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer 
 
 		case "application/json":
 			result["application/json"] = o.JSONProducer
-
-		case "text/plain":
-			result["text/plain"] = o.TxtProducer
 
 		}
 

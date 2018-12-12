@@ -5,7 +5,7 @@ Package restapi i18n Api
 
     Schemes:
       http
-    Host: 127.0.0.1:8080
+    Host: 127.0.0.1:7082
     BasePath: /v1
     Version: 1.0.0
 
@@ -15,7 +15,6 @@ Package restapi i18n Api
 
     Produces:
     - application/json
-    - text/plain
 
 swagger:meta
 */

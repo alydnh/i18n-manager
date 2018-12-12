@@ -44,21 +44,23 @@ func configureAPI(api *operations.I18nAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.TxtProducer = runtime.TextProducer()
-
 	api.QueryGetQueryLanguageStatusHandler = query.GetQueryLanguageStatusHandlerFunc(func(params query.GetQueryLanguageStatusParams) middleware.Responder {
-		i18n := manager.Query(params.Language, params.Status, params.Languages)
+
 		accept := params.HTTPRequest.Header.Get("Accept")
 		if strings.Contains(accept, "application/json") {
+			i18n := manager.Query(params.Language, params.Status, params.Languages, false)
 			return query.NewGetQueryLanguageStatusOK().WithPayload(i18n.ToApiModel())
-		} else if bytes, err := yaml.Marshal(i18n); nil != err {
-			return query.NewGetQueryLanguageStatusBadRequest().WithPayload(err.Error())
 		} else {
-			return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
-				w.Header().Set("Content-type", "text/yaml")
-				w.WriteHeader(200)
-				w.Write(bytes)
-			})
+			i18n := manager.Query(params.Language, params.Status, params.Languages, false)
+			if bytes, err := yaml.Marshal(i18n); nil != err {
+				return query.NewGetQueryLanguageStatusBadRequest().WithPayload(err.Error())
+			} else {
+				return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
+					w.Header().Set("Content-type", "text/yaml")
+					w.WriteHeader(200)
+					w.Write(bytes)
+				})
+			}
 		}
 	})
 	api.OperationSaveOrUpdateKeyHandler = operation.SaveOrUpdateKeyHandlerFunc(func(params operation.SaveOrUpdateKeyParams) middleware.Responder {

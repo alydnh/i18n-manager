@@ -26,7 +26,7 @@ func init() {
     "title": "i18n Api",
     "version": "1.0.0"
   },
-  "host": "127.0.0.1:8080",
+  "host": "127.0.0.1:7082",
   "basePath": "/v1",
   "paths": {
     "/key": {
@@ -70,8 +70,7 @@ func init() {
     "/query/{language}/{status}": {
       "get": {
         "produces": [
-          "application/json",
-          "text/plain"
+          "application/json"
         ],
         "tags": [
           "Query"
@@ -204,7 +203,7 @@ func init() {
     "title": "i18n Api",
     "version": "1.0.0"
   },
-  "host": "127.0.0.1:8080",
+  "host": "127.0.0.1:7082",
   "basePath": "/v1",
   "paths": {
     "/key": {
@@ -248,8 +247,7 @@ func init() {
     "/query/{language}/{status}": {
       "get": {
         "produces": [
-          "application/json",
-          "text/plain"
+          "application/json"
         ],
         "tags": [
           "Query"
